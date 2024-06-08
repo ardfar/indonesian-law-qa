@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indonesia Law QA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+          }
+    </style>
+</head>
+<body class="font-serif text-white">
+    <section class="flex items-center justify-center w-full h-screen bg-[#1b1b1a] bg-cover bg-center bg-no-repeat">
+        <div class="w-full h-fit grid grid-cols-3 gap-2 px-6">
+            <div class="w-full h-fit flex justify-center col-span-3">
+                <div class="w-1/2 rounded-xl p-8">
+                    <h1 class="text-6xl text-white text-center">
+                        Indonesia Law QA
+                    </h1>
+                    <p class="text-white text-center mt-4 text-xl capitalize">
+                        A BERT based Question Answering System for Who want to know Indonesia Law
+                    </p>
+                </div>
+            </div>
+
+            <div class="block col-span-3">
+
+                <div class="flex w-full h-fit justify-center">
+                    <textarea name="question" id="question" class="w-3/5 mt-4 p-2 bg-[#967a6b] text-white placeholder:text-white rounded-lg text-xl p-4" rows="3" placeholder="Write you question here..."></textarea>
+                </div>
+
+                <div class="flex justify-center my-4">
+                    <button class="bg-[#755d50] rounded-md px-4 py-2 text-center text-white" type="button" id="get-answer">Get Answer</button>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <section class="flex items-center justify-center w-full h-screen bg-[#1b1b1a] bg-cover bg-center bg-no-repeat hidden" id="response-container">
+        <div class="w-full h-fit grid grid-cols-3 gap-2 px-6">
+            <div class="w-full h-fit flex justify-center">
+                <div class="w-full rounded-xl p-8">
+                    <p class="text-white text-center mt-4 text-xl capitalize font-bold underline">
+                        Question:
+                    </p>
+                </div>
+            </div>
+            <div class="w-full h-fit flex justify-center col-span-2">
+                <div class="w-full rounded-xl p-8">
+                    <p class="text-white text-center mt-4 text-xl capitalize" id="question_place">
+                        A BERT based Question Answering System for Who want to know Indonesia Law
+                    </p>
+                </div>
+            </div>
+
+            <div class="w-full h-fit flex justify-center">
+                <div class="w-full rounded-xl p-8">
+                    <p class="text-white text-center mt-4 text-xl capitalize font-bold underline">
+                        Answer:
+                    </p>
+                </div>
+            </div>
+            <div class="w-full h-fit flex justify-center col-span-2">
+                <div class="w-full rounded-xl p-8">
+                    <p class="text-white text-center mt-4 text-xl capitalize" id="answer_place">
+                        Getting Answer
+                    </p>
+                </div>
+            </div>
+
+            <div class="w-full h-fit flex justify-center">
+                <div class="w-full rounded-xl p-8">
+                    <p class="text-white text-center mt-4 text-xl capitalize font-bold underline">
+                        Confidence:
+                    </p>
+                </div>
+            </div>
+            <div class="w-full h-fit flex justify-center col-span-2">
+                <div class="w-full rounded-xl p-8">
+                    <p class="text-white text-center mt-4 text-xl capitalize" id="confidence_place">
+                        Getting Confidence
+                    </p>
+                </div>
+            </div>
+
+            <div class="w-full h-fit flex justify-center">
+                <div class="w-full rounded-xl p-8">
+                    <p class="text-white text-center mt-4 text-xl capitalize font-bold underline">
+                        Alternate Answer:
+                    </p>
+                </div>
+            </div>
+            <div class="w-full h-fit flex justify-center col-span-2">
+                <div class="w-full rounded-xl p-8">
+                    <p class="text-white text-center mt-4 text-xl capitalize" id="alternate_place">
+                        Getting Alternate Answer
+                    </p>
+                </div>
+            </div>
+
+            <div class="w-full h-fit flex justify-center">
+                <div class="w-full rounded-xl p-8">
+                    <p class="text-white text-center mt-4 text-xl capitalize font-bold underline">
+                        Alternate Confidence:
+                    </p>
+                </div>
+            </div>
+            <div class="w-full h-fit flex justify-center col-span-2">
+                <div class="w-full rounded-xl p-8">
+                    <p class="text-white text-center mt-4 text-xl capitalize" id="alternate_conf_place">
+                        Getting Alternate Answer
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <script>
+        $(document).ready(function(){
+            function switch_button(status){
+
+                console.log(status)
+
+                if (status == "wait"){
+                    $('#get-answer').html("Waiting for Response")
+                    $('#get-answer').attr("disabled", "disabled")
+                } else {
+                    $('#get-answer').html("Get Answer")
+                    $('#get-answer').removeAttr("disabled")
+                }
+
+            }
+
+            function hide_show_r_con(status){
+                if (status == "show"){
+                    $("#response-container").show()
+
+                    $(window).scrollTop($("#response-container").offset().top);
+                } else {
+                    $("#response-container").hide()
+                }
+
+            }
+
+
+            $('#get-answer').click(function(){
+                var question = $('#question').val()
+
+                $('#question_place').html(question);
+
+                hide_show_r_con("hide")
+
+                if (question.length == 0)
+                {
+                    alert("Please provide your question!")
+                    return;
+                }
+
+                switch_button("wait");
+
+                $.ajax({
+                    url: 'http://127.0.0.1:5000/get-answer',
+                    type: 'POST',
+                    data: question,
+                    processData: false,
+                    contentType: false,
+                    success: function(response){
+                        $('#answer_place').html(response.answer);
+                        $('#alternate_place').html(response.alternate);
+                        $('#confidence_place').html(response.confidence + "%");
+                        $('#alternate_conf_place').html(response.alternate_confidence + "%");
+
+                        hide_show_r_con("show");
+                        switch_button("done")
+
+                    },
+                    error: function(xhr, status, error){
+                        console.error(xhr.responseText);
+                    }
+                });
+
+            });
+        });
+    </script>
+</body>
+</html>
