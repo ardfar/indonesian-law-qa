@@ -73,7 +73,7 @@ Install CUDNN and CUDA toolkit to use Nvidia GPU Inference on Conda Environment
 Install Torch
 
 ```bash
-   pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu118
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
 Install required libraries via pip
